@@ -5,6 +5,7 @@ import { setlogout,setuser } from '../../redux-toolkit/userSlice';
 import axios from 'axios';
 
 const ProfilePage = () => {
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const isloggedin = useSelector((state) => state.user.isLoggedin);
   const user = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
@@ -41,7 +42,7 @@ const ProfilePage = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.put(`http://localhost:5000/api/users/update-user/${user._id}`,{
+      const response = await axios.put(`${apiBaseUrl}/api/users/update-user/${user._id}`,{
         profile: profile,
       });
 

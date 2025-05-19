@@ -17,6 +17,9 @@ import axios from 'axios';
 import { useSelector,useDispatch } from 'react-redux';
 
 function ReorderPage() {
+
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
   const [expandedOrder, setExpandedOrder] = useState(null);
   const user = useSelector((state) => state.user.user);
   const isloggedin = useSelector((state) => state.user.isLoggedin);
@@ -28,7 +31,7 @@ function ReorderPage() {
         return;
       }
       try {
-        const response = await axios.get(`http://localhost:5000/api/orders/${user._id}`);
+        const response = await axios.get(`${apiBaseUrl}/api/orders/${user._id}`);
         console.log(response.data);
         setorderitem(response.data.orders);
       } catch (err) {
@@ -51,7 +54,7 @@ function ReorderPage() {
     try {
       order.userid = order.user;
       order.storeid = order.store;
-      const response = await axios.post('http://localhost:5000/api/orders/add', order);
+      const response = await axios.post(`${apiBaseUrl}/api/orders/add`, order);
       if (response.status === 201) {
         alert(`Reordering items from ${order.store}`);
         console.log('Order placed successfully', response.data.order);

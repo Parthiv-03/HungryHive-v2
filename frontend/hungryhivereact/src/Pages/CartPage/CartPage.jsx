@@ -10,6 +10,8 @@ import { useSelector,useDispatch } from 'react-redux';
 
 function CartPage({ isNavOpen }) {
 
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
   const userRedux = useSelector((state) => state.user.user);
   const isloggedin = useSelector((state) => state.user.isLoggedin);
 
@@ -42,13 +44,13 @@ function CartPage({ isNavOpen }) {
         return;
       }
       try {
-        const response = await axios.get(`http://localhost:5000/api/cart/${userRedux._id}`);
+        const response = await axios.get(`${apiBaseUrl}/api/cart/${userRedux._id}`);
             if (response.data.carts.length === 0) {
               setfetchitem(null); // Set fetchitem to null if the cart is empty
             }
             else{
               setfetchitem(response.data.carts[0]);
-              const storeresponse = await axios.get(`http://localhost:5000/api/store/${response.data.carts[0].items[0].store}`);
+              const storeresponse = await axios.get(`${apiBaseUrl}/api/store/${response.data.carts[0].items[0].store}`);
               setstoreInfo(storeresponse.data.store);
             }
       } catch (err) {
@@ -108,10 +110,10 @@ function CartPage({ isNavOpen }) {
   const updateCartInDB = async (updatedItems) => {
     try {
         if(updatedItems.length==0){
-          await axios.delete(`http://localhost:5000/api/cart/delete/${fetchitem.id}`);
+          await axios.delete(`${apiBaseUrl}/api/cart/delete/${fetchitem.id}`);
         }
         else{
-        await axios.put(`http://localhost:5000/api/cart/update/${fetchitem.id}`, {
+        await axios.put(`${apiBaseUrl}/api/cart/update/${fetchitem.id}`, {
         items: updatedItems,
         totalAmount: TotalBill,
         });}
@@ -156,8 +158,8 @@ function CartPage({ isNavOpen }) {
 
     try {
       // Make the API call to add the new order
-      axios.delete(`http://localhost:5000/api/cart/delete/${fetchitem.id}`);
-      const response = await axios.post('http://localhost:5000/api/orders/add', orderData);
+      axios.delete(`${apiBaseUrl}/api/cart/delete/${fetchitem.id}`);
+      const response = await axios.post(`${apiBaseUrl}/api/orders/add`, orderData);
       if (response.status === 201) {
         alert("Order placed successfully");
         console.log('Order placed successfully', response.data);

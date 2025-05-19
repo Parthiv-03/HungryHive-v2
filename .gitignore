@@ -3,3 +3,4 @@
 /frontend/hungryhivereact/src/services/firebaseConfig
 /backend/.env
 .env
+/frontend/hungryhivereact/.env
