@@ -1,5 +1,7 @@
+const api_key = import.meta.env.API_KEY;
+
 const firebaseConfig = {
-     apiKey: "AIzaSyAwRbBYS3oXXbt-_MORMcNIIXVRP7Xkk1A",
+     apiKey: api_key,
      authDomain: "hungryhive-18167.firebaseapp.com",
      projectId: "hungryhive-18167",
      storageBucket: "hungryhive-18167.appspot.com",
