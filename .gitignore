@@ -1,0 +1,5 @@
+/backend/node_modules/
+/frontend/hungryhivereact/node_modules/
+/frontend/hungryhivereact/src/services/firebaseConfig
+/backend/.env
+.env

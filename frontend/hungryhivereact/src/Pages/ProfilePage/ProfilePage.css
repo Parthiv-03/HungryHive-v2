@@ -1,0 +1,119 @@
+   body {
+     font-family: Arial, sans-serif;
+     padding: 2rem;
+   }
+   
+   .profile-container {
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     height: 100vh;
+   }
+   
+   .profile-box {
+     padding: 20px;
+     border-radius: 10px;
+     width: 800px; 
+     max-width: 100%;
+     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+   }
+   
+   h2 {
+     margin-bottom: 10px;
+   }
+   
+   p {
+     margin-bottom: 20px;
+   }
+   
+   
+   .header-row {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+   }
+   
+   .logout-button {
+     color: #f00;
+     text-decoration: none;
+     font-size: 16px;
+     cursor: pointer;
+     padding: 8px 15px;
+     border: none;
+     border-radius: 5px;
+     background-color: #0000;
+   }
+
+   .logout-button:hover {
+     text-decoration: underline;
+   }
+
+   .form-grid {
+     display: grid;
+     grid-template-columns: 1fr 1fr;
+     gap: 20px;
+   }
+   
+   .input-row {
+     display: flex;
+     flex-direction: column;
+   }
+   
+   .input-row label {
+     margin-bottom: 5px;
+   }
+   
+   .input-row input {
+     padding: 10px;
+     border: none;
+     border-radius: 5px;
+     background-color: #f6f3f2;
+     font-size: 1rem
+   }
+   
+   .input-row input:focus {
+     outline: none;
+     border: 1px solid 
+   }
+   
+   .address-fieldset {
+     margin-top: 20px;
+     border: 1px solid #555;
+     border-radius: 5px;
+     padding: 20px;
+   }
+   
+   .address-fieldset legend {
+     padding: 0 10px;
+     font-size: 1.2em;
+   }
+   
+   .button-row {
+     display: flex;
+     justify-content: flex-end;
+     margin-top: 20px;
+   }
+   
+   .reset-button {
+     background-color: #FF0000;
+     color: #fff;
+     padding: 10px 20px;
+     border: none;
+     border-radius: 5px;
+     cursor: pointer;
+     margin-right: 10px;
+   }
+   
+   .save-button {
+     background-color: #007bff;
+     color: #fff;
+     padding: 10px 20px;
+     border: none;
+     border-radius: 5px;
+     cursor: pointer;
+   }
+   
+   .save-button:hover {
+     background-color: #0056b3;
+   }
+   
