@@ -32,7 +32,7 @@ function ReorderPage() {
       }
       try {
         const response = await axios.get(`${apiBaseUrl}/api/orders/${user._id}`);
-        console.log(response.data);
+        
         setorderitem(response.data.orders);
       } catch (err) {
         console.error(err);
@@ -42,7 +42,7 @@ function ReorderPage() {
   }, []);
 
   useEffect(() => {
-    console.log(orderitem); // Log fetched cart details for debugging
+     
   }, [orderitem]);
 
 
@@ -57,7 +57,6 @@ function ReorderPage() {
       const response = await axios.post(`${apiBaseUrl}/api/orders/add`, order);
       if (response.status === 201) {
         alert(`Reordering items from ${order.store}`);
-        console.log('Order placed successfully', response.data.order);
         setorderitem((previtem) => [...previtem, response.data.order]);
       }
     } catch (error) {

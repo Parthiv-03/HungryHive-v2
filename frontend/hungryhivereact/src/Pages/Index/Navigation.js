@@ -1,12 +1,10 @@
 import React from 'react';
 import RestaurantMenuOutlinedIcon from '@mui/icons-material/RestaurantMenuOutlined';
-import StoreOutlinedIcon from '@mui/icons-material/StoreOutlined';
 import InventoryRoundedIcon from '@mui/icons-material/InventoryRounded';
 import HistoryRoundedIcon from '@mui/icons-material/HistoryRounded';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import Chip from '@mui/material/Chip';
 
 const NAVIGATION = [
   {
@@ -59,7 +57,6 @@ const NAVIGATION = [
     segment: 'Cart',
     title: 'Cart',
     icon: React.createElement(ShoppingCartIcon),  // React.createElement
-    action: React.createElement(Chip, { label: 7, color: 'primary', size: 'small' }),  // React.createElement for Chip
   },
   {
     kind: 'divider',

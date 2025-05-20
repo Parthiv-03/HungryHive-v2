@@ -210,8 +210,7 @@ function HomePage() {
     setIsPriceFilterActive(event.target.checked);
   };
 
-  // Apply filters
-  const applyFilters = () => {
+    const applyFilters = () => {
     let filtered = [...items];
     
     if (searchTerm && searchTerm.trim() !== '') {
@@ -219,7 +218,10 @@ function HomePage() {
         item.item_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.item_description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.store_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.item_category.toLowerCase().includes(searchTerm.toLowerCase())
+        item.item_category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.item_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.store_city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.store_state.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
     
@@ -231,7 +233,7 @@ function HomePage() {
     
     setFilteredItems(filtered);
     setFilterDrawerOpen(false);
-  };
+  };
 
   // Reset all filters
   const resetFilters = () => {

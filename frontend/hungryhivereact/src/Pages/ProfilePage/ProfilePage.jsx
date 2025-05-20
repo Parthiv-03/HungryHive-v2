@@ -48,7 +48,7 @@ const ProfilePage = () => {
 
       if(response.data.user){
         dispatch(setuser(response.data.user));
-        console.log(response.data.user);
+
       }
       else{
         console.log(response.data.message);
@@ -62,7 +62,6 @@ const ProfilePage = () => {
 
   const handleLogout = () => {
     dispatch(setlogout());
-    console.log("logout");
   };
 
   return (

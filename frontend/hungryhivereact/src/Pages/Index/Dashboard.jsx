@@ -61,29 +61,7 @@ function Dashboard() {
     };
   }, []);
 
-  // useEffect(()=>{
-  //   console.log(isloggedin);
-  //   if(isloggedin){
-  //       navigation.push(
-  //         {
-  //           segment: 'profile',
-  //           title: 'Profile',
-  //           icon: React.createElement(PersonOutlineOutlinedIcon),  // React.createElement
-  //         }
-  //       );
-  //   }
-  //   else{
-  //     if(!navigation.includes({
-  //       segment: 'profile',
-  //       title: 'Profile',
-  //       icon: React.createElement(PersonOutlineOutlinedIcon),  // React.createElement
-  //     }))
-  //       navigation.pop();
-  //   }
-
-  //   setnavigation(navigation);
-  // },[isloggedin]);
-
+ 
   useEffect(() => {
     const profileNavItem = {
       segment: 'profile',

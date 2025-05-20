@@ -54,8 +54,7 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   }, []);
 
   useEffect(() => {
-    console.log(orderitem); // Log fetched cart details for debugging
-    console.log(storeArray);
+   
   }, [orderitem, storeArray]);
 
   // Toggle order details view

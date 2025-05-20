@@ -7,7 +7,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Grid from '@mui/material/Grid';
-import axios from 'axios'; 
+import axios from 'axios';
 import NavigateBeforeOutlinedIcon from '@mui/icons-material/NavigateBeforeOutlined';
 import NavigateNextOutlinedIcon from '@mui/icons-material/NavigateNextOutlined';
 import IconButton from '@mui/material/IconButton';
@@ -23,7 +23,7 @@ import Drawer from '@mui/material/Drawer';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import Divider from '@mui/material/Divider';
 import CloseIcon from '@mui/icons-material/Close';
-
+import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
 
 // Fetch food image from external API
 const fetchFoodImage = async (foodType) => {
@@ -44,7 +44,6 @@ const MenuPage = () => {
   const user = useSelector((state) => state.user.user);
   const isloggedin = useSelector((state) => state.user.isLoggedin);
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-
 
   const [foodData, setFoodData] = useState([
     { type: 'Pizza', imageUrl: '' },
@@ -108,19 +107,19 @@ const MenuPage = () => {
   const handleFoodClick = async (foodType) => {
     setSelectedFood(foodType);
     try {
-      const response = await axios.get(`${apiBaseUrl}/api/store/getStore/${foodType}`); 
+      const response = await axios.get(`${apiBaseUrl}/api/store/getStore/${foodType}`);
       setStoreData(response.data.stores);
       setFilteredStoreData(response.data.stores);
-      
+     
       // Calculate max price for the slider
       if (response.data.stores.length > 0) {
-        const allPrices = response.data.stores.flatMap(store => 
+        const allPrices = response.data.stores.flatMap(store =>
           store.menu
             .filter(item => item.item_category === foodType)
             .map(item => item.item_price)
         );
         const maxItemPrice = Math.max(...allPrices);
-        const roundedMax = maxItemPrice <= 1000 
+        const roundedMax = maxItemPrice <= 1000
           ? Math.ceil(maxItemPrice / 100) * 100
           : Math.ceil(maxItemPrice / 1000) * 1000;
         setMaxPrice(roundedMax);
@@ -151,32 +150,35 @@ const MenuPage = () => {
   // Apply filters
   const applyFilters = (search = searchTerm, priceRangeToApply = isPriceFilterActive ? priceRange : null) => {
     let filtered = [...storeData];
-    
+   
     // Apply search filter
     if (search && search.trim() !== '') {
-      filtered = filtered.filter(store => 
+      filtered = filtered.filter(store =>
         store.store_name.toLowerCase().includes(search.toLowerCase()) ||
-        store.store_city.toLowerCase().includes(search.toLowerCase()) ||
-        store.store_state.toLowerCase().includes(search.toLowerCase()) ||
-        store.menu.some(item => 
+        store.store_address.city.toLowerCase().includes(search.toLowerCase()) ||
+        store.store_address.state.toLowerCase().includes(search.toLowerCase()) ||
+        store.store_address.street.toLowerCase().includes(search.toLowerCase()) ||
+        store.store_address.area.toLowerCase().includes(search.toLowerCase()) ||
+        store.store_address.country.toLowerCase().includes(search.toLowerCase()) ||
+        store.menu.some(item =>
           item.item_name.toLowerCase().includes(search.toLowerCase()) ||
-          item.item_description.toLowerCase().includes(search.toLowerCase())
+          item.item_type.toLowerCase().includes(search.toLowerCase())
         )
       );
     }
-    
+   
     // Apply price filter
     if (priceRangeToApply) {
       filtered = filtered.map(store => ({
         ...store,
-        menu: store.menu.filter(item => 
-          item.item_category === selectedFood && 
-          item.item_price >= priceRangeToApply[0] && 
+        menu: store.menu.filter(item =>
+          item.item_category === selectedFood &&
+          item.item_price >= priceRangeToApply[0] &&
           item.item_price <= priceRangeToApply[1]
         )
       })).filter(store => store.menu.length > 0);
     }
-    
+   
     setFilteredStoreData(filtered);
   };
 
@@ -212,11 +214,11 @@ const MenuPage = () => {
       return;
     }
     const newQuantity = (storeQuantities[store.store_name]?.[item.item_name] || 0) + 1;
-  
+ 
     try {
       let cartResponse = await axios.get(`${apiBaseUrl}/api/cart/${user._id}`);
       let cart = cartResponse.data.carts[0];
-  
+ 
       if (cart && cart.items.length > 0) {
         const existingStoreId = cart.items[0].store.toString();
         if (existingStoreId !== store._id.toString()) {
@@ -224,7 +226,7 @@ const MenuPage = () => {
           return;
         }
       }
-  
+ 
       setStoreQuantities((prevQuantities) => ({
         ...prevQuantities,
         [store.store_name]: {
@@ -232,7 +234,7 @@ const MenuPage = () => {
           [item.item_name]: newQuantity,
         },
       }));
-  
+ 
       if (!cart) {
         const newCart = {
           userid: user._id,
@@ -245,11 +247,11 @@ const MenuPage = () => {
           }],
           total_amount: item.item_price * newQuantity,
         };
-  
+ 
         await axios.post(`${apiBaseUrl}/api/cart/add`, newCart);
       } else {
         let itemExists = false;
-  
+ 
         const updatedItems = cart.items.map((cartItem) => {
           if (cartItem.item_name === item.item_name) {
             itemExists = true;
@@ -260,7 +262,7 @@ const MenuPage = () => {
           }
           return cartItem;
         });
-  
+ 
         if (!itemExists) {
           updatedItems.push({
             store: store._id,
@@ -270,12 +272,12 @@ const MenuPage = () => {
             item_category: selectedFood,
           });
         }
-  
+ 
         const updatedTotalAmount = updatedItems.reduce(
           (total, cartItem) => total + cartItem.item_quantity * cartItem.item_price,
           0
         );
-  
+ 
         await axios.put(`${apiBaseUrl}/api/cart/update/${cart._id}`, {
           items: updatedItems,
           totalAmount: updatedTotalAmount,
@@ -293,39 +295,39 @@ const MenuPage = () => {
       return;
     }
     const currentQuantity = storeQuantities[store.store_name]?.[item.item_name] || 0;
-  
+ 
     if (currentQuantity <= 0) {
       return;
     }
-  
+ 
     const newQuantity = currentQuantity - 1;
-  
+ 
     try {
       let cartResponse = await axios.get(`${apiBaseUrl}/api/cart/${user._id}`);
       let cart = cartResponse.data.carts[0];
-  
+ 
       if (!cart) {
         return;
       }
-  
+ 
       const itemIndex = cart.items.findIndex(cartItem => cartItem.item_name === item.item_name);
-  
+ 
       if (itemIndex !== -1) {
         if (newQuantity > 0) {
           cart.items[itemIndex].item_quantity = newQuantity;
-  
+ 
           const updatedTotalAmount = cart.items.reduce(
             (total, cartItem) => total + cartItem.item_quantity * cartItem.item_price,
             0
           );
-  
+ 
           await axios.put(`${apiBaseUrl}/api/cart/update/${cart._id}`, {
             items: cart.items,
             totalAmount: updatedTotalAmount,
           });
         } else {
           const updatedItems = cart.items.filter((_, index) => index !== itemIndex);
-  
+ 
           if (updatedItems.length === 0) {
             await axios.delete(`${apiBaseUrl}/api/cart/delete/${cart._id}`);
           } else {
@@ -333,14 +335,14 @@ const MenuPage = () => {
               (total, cartItem) => total + cartItem.item_quantity * cartItem.item_price,
               0
             );
-  
+ 
             await axios.put(`${apiBaseUrl}/api/cart/update/${cart._id}`, {
               items: updatedItems,
               totalAmount: updatedTotalAmount,
             });
           }
         }
-  
+ 
         setStoreQuantities((prevQuantities) => ({
           ...prevQuantities,
           [store.store_name]: {
@@ -367,14 +369,14 @@ const MenuPage = () => {
       }}
     >
       <Box sx={{ display: 'flex', width: '100%', mb: 2 }}>
-        <IconButton 
+        <IconButton
           onClick={handleLeftClick}
           disabled={startIndex === 0}
           sx={{ml: 'auto' }}
         >
           <NavigateBeforeOutlinedIcon sx={{ fontSize: '2rem' }}/>
         </IconButton>
-        <IconButton 
+        <IconButton
           onClick={handleRightClick}
           disabled={startIndex >= foodData.length - visibleItems}
           sx={{mr: '2.5rem' }}
@@ -416,7 +418,7 @@ const MenuPage = () => {
         ))}
       </Box>
 
-      {selectedFood && filteredStoreData.length > 0 && (
+      {selectedFood && (
         <Box sx={{ mt: 4, textAlign: 'center', width: '80%' }}>
           <Typography variant="h5" mb={2}>
             Stores selling {selectedFood}
@@ -427,7 +429,7 @@ const MenuPage = () => {
             <TextField
               fullWidth
               variant="outlined"
-              placeholder={`Search ${selectedFood} stores...`}
+              placeholder={`Search ${selectedFood} stores or category...`}
               value={searchTerm}
               onChange={handleSearchChange}
               sx={{ maxWidth: '600px' }}
@@ -439,8 +441,8 @@ const MenuPage = () => {
                 ),
               }}
             />
-            <Button 
-              variant="outlined" 
+            <Button
+              variant="outlined"
               startIcon={<FilterListIcon />}
               onClick={toggleFilterDrawer(true)}
               sx={{ height: '56px' }}
@@ -449,55 +451,92 @@ const MenuPage = () => {
             </Button>
           </Box>
 
-          <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', mt: 2, mb: 2 }}>
-            {filteredStoreData.length} {filteredStoreData.length === 1 ? 'store' : 'stores'} found
-          </Typography>
+          {filteredStoreData.length > 0 ? (
+            <>
+              <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', mt: 2, mb: 2 }}>
+                {filteredStoreData.length} {filteredStoreData.length === 1 ? 'store' : 'stores'} found
+              </Typography>
 
-          <Grid container spacing={3}>
-            {filteredStoreData.map((store, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <Card sx={{ maxWidth: 345 }}>
-                  <CardMedia
-                    component="img"
-                    height="180"
-                    image={store.store_image || 'https://via.placeholder.com/300'} 
-                    alt={store.store_name}
-                  />
-                  <CardContent>
-                    <Typography gutterBottom variant="h6" component="div">
-                      {store.store_name}
-                    </Typography>
-                    {store.menu && store.menu.filter(item => item.item_category === selectedFood).map(item => (
-                      <Box key={item.item_name} sx={{ mt: 1 }}>
-                        <Typography variant="body2">{item.item_name}</Typography>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 , mt:1}}>
-                        ₹ {item.item_price}
+              <Grid container spacing={3}>
+                {filteredStoreData.map((store, index) => (
+                  <Grid item xs={12} sm={6} md={4} key={index}>
+                    <Card sx={{ maxWidth: 345 }}>
+                      <CardMedia
+                        component="img"
+                        height="180"
+                        image={store.store_image || 'https://via.placeholder.com/300'}
+                        alt={store.store_name}
+                      />
+                      <CardContent>
+                        <Typography gutterBottom variant="h6" component="div">
+                          {store.store_name}
                         </Typography>
-                        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 2 , mb:0.5}}>
-                          <Button
-                            variant="outlined"
-                            onClick={() => handleDecrement(store, item)}
-                            disabled={storeQuantities[store.store_name] === 0}
-                          >
-                            -
-                          </Button>
-                          <Typography sx={{ mx: 2 }}>
-                            {storeQuantities[store.store_name]?.[item.item_name] || 0}
-                          </Typography>
-                          <Button
-                            variant="outlined"
-                            onClick={() => handleIncrement(store, item)}
-                          >
-                            +
-                          </Button>
-                        </Box>
-                      </Box>
-                    ))}
-                  </CardContent>
-                </Card>
+                        {store.menu && store.menu.filter(item => item.item_category === selectedFood).map(item => (
+                          <Box key={item.item_name} sx={{ mt: 1 }}>
+                            <Typography variant="body2">{item.item_name}</Typography>
+                            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 , mt:1}}>
+                            ₹ {item.item_price}
+                            </Typography>
+                            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 2 , mb:0.5}}>
+                              <Button
+                                variant="outlined"
+                                onClick={() => handleDecrement(store, item)}
+                                disabled={storeQuantities[store.store_name] === 0}
+                              >
+                                -
+                              </Button>
+                              <Typography sx={{ mx: 2 }}>
+                                {storeQuantities[store.store_name]?.[item.item_name] || 0}
+                              </Typography>
+                              <Button
+                                variant="outlined"
+                                onClick={() => handleIncrement(store, item)}
+                              >
+                                +
+                              </Button>
+                            </Box>
+                          </Box>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
               </Grid>
-            ))}
-          </Grid>
+            </>
+          ) : (
+            <Box 
+              sx={{ 
+                display: 'flex', 
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                py: 5,
+                px: 2,
+                mt: 2,
+                backgroundColor: 'background.paper',
+                borderRadius: 2,
+                boxShadow: 1
+              }}
+            >
+              <SentimentDissatisfiedIcon sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
+              <Typography variant="h6" gutterBottom>
+                No stores or food item found
+              </Typography>
+              <Typography variant="body1" color="text.secondary" align="center">
+                We couldn't find any stores that match your search criteria for {selectedFood}.
+              </Typography>
+              <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 1 }}>
+                Try adjusting your filters or search terms.
+              </Typography>
+              <Button
+                variant="contained"
+                onClick={resetFilters}
+                sx={{ mt: 3 }}
+              >
+                Clear Filters
+              </Button>
+            </Box>
+          )}
         </Box>
       )}
 
@@ -519,28 +558,28 @@ const MenuPage = () => {
             <CloseIcon />
           </IconButton>
         </Box>
-        
+       
         <Divider sx={{ my: 2 }} />
-        
+       
         {/* Price Filter */}
         <Box sx={{ mb: 4 }}>
           <Typography variant="subtitle1" sx={{ fontWeight: 'medium', mb: 2 }}>
             Price Range
           </Typography>
-          
+         
           <FormGroup sx={{ mb: 2 }}>
-            <FormControlLabel 
+            <FormControlLabel
               control={
-                <Switch 
-                  checked={isPriceFilterActive} 
-                  onChange={handleTogglePriceFilter} 
+                <Switch
+                  checked={isPriceFilterActive}
+                  onChange={handleTogglePriceFilter}
                   color="primary"
                 />
-              } 
-              label="Filter by price" 
+              }
+              label="Filter by price"
             />
           </FormGroup>
-          
+         
           <Slider
             value={priceRange}
             onChange={handlePriceRangeChange}
@@ -550,7 +589,7 @@ const MenuPage = () => {
             marks={priceMarks}
             valueLabelFormat={formatPrice}
             disabled={!isPriceFilterActive}
-            sx={{ 
+            sx={{
               color: isPriceFilterActive ? 'primary.main' : 'grey.400',
               '& .MuiSlider-thumb': {
                 height: 24,
@@ -558,27 +597,27 @@ const MenuPage = () => {
               },
             }}
           />
-          
+         
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
             <Typography variant="body2" color={isPriceFilterActive ? "text.primary" : "text.secondary"}>
               Current range: {formatPrice(priceRange[0])} - {formatPrice(priceRange[1])}
             </Typography>
           </Box>
         </Box>
-        
+       
         <Divider sx={{ my: 2 }} />
-        
+       
         {/* Action Buttons */}
         <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
-          <Button 
-            variant="outlined" 
+          <Button
+            variant="outlined"
             onClick={resetFilters}
             fullWidth
           >
             Reset
           </Button>
-          <Button 
-            variant="contained" 
+          <Button
+            variant="contained"
             onClick={() => {
               applyFilters();
               setFilterDrawerOpen(false);
@@ -594,6 +633,3 @@ const MenuPage = () => {
 };
 
 export default MenuPage;
-
-
-

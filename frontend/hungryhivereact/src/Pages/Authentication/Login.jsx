@@ -33,7 +33,7 @@ function GoogleSignInButton({ onClose }) {   //setisloggedin
         let User = response.data.user;
   
         dispatch(setlogin(User));
-        console.log("Signed in and userId set in Redux:", User);
+        
   
         onClose();
         
